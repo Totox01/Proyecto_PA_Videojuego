@@ -6,9 +6,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class PingBall {
-	    private int x;
-	    private int y;
+public class PingBall extends GameObject {
 	    private int size;
 	    private int xSpeed;
 	    private int ySpeed;
@@ -16,8 +14,7 @@ public class PingBall {
 	    private boolean estaQuieto;
 	    
 	    public PingBall(int x, int y, int size, int xSpeed, int ySpeed, boolean iniciaQuieto) {
-	        this.x = x;
-	        this.y = y;
+			super(x, y, size, size);
 	        this.size = size;
 	        this.xSpeed = xSpeed;
 	        this.ySpeed = ySpeed;

@@ -5,11 +5,14 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
+import java.awt.*;
+
 public class Paddle {
-    private int x = 20;
-    private int y = 20;
-    private int width = 100;
-    private int height = 10;
+    private Rectangle rect;
+    private int x;
+    private int y;
+    private int width;
+    private int height;
     
     public Paddle(int x, int y, int ancho, int alto) {
     	this.x = x;
@@ -34,6 +37,5 @@ public class Paddle {
         }
         shape.rect(x, y, width, height);
     }
-    
     
 }
