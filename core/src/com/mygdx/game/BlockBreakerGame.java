@@ -75,7 +75,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	        if (vidas<=0) {
 	        	vidas = 3;
 	        	nivel = 1;
-	        	crearBloques(2+nivel);
+	        	block.createBlocks(2+nivel);
 	        	//ball = new PingBall(pad.getX()+pad.getWidth()/2-5, pad.getY()+pad.getHeight()+11, 10, 5, 7, true);	        	
 	        }
 	        // verificar si el nivel se terminó

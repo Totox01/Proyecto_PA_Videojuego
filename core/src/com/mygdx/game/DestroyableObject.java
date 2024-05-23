@@ -4,5 +4,5 @@ public abstract class DestroyableObject extends GameObject implements Destroyeab
     public DestroyableObject(int x, int y, int width, int height) {
         super(x, y, width, height);
     }
-    boolean isDestroyed = false;
+    public boolean isDestroyed = false;
 }
