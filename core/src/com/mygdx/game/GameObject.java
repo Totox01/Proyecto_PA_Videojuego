@@ -1,27 +1,29 @@
 package com.mygdx.game;
 
 public abstract class GameObject {
-    protected int x;
-    protected int y;
-    protected int width;
-    protected int height;
+    protected float x;
+    protected float y;
+    protected float width;
+    protected float height;
 
-    public GameObject(int x, int y, int width, int height) {
+    public GameObject(float x, float y, float width, float height) {
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
     }
-    public int getHeight() {
+
+
+    public float getHeight() {
         return height;
     }
-    public int getWidth() {
+    public float getWidth() {
         return width;
     }
-    public int getX() {
+    public float getX() {
         return x;
     }
-    public int getY() {
+    public float getY() {
         return y;
     }
 }

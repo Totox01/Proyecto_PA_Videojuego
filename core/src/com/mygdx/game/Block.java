@@ -1,39 +1,48 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-
-import java.awt.*;
-import java.util.Random;
-import java.util.ArrayList;
-
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 
-public class Block implements Colisionable{
-    Color cc;
-    private ArrayList<DestroyableObject> blocks;
+import java.util.ArrayList;
+import java.util.Random;
 
-    public void createBlocks(int filas){
-        int blockWidth = 70;
-        int blockHeight = 26;
-        int y = Gdx.graphics.getHeight();
-        for (int cont = 0; cont<filas; cont++ ) {
-            y -= blockHeight+10;
-            for (int x = 5; x < Gdx.graphics.getWidth(); x += blockWidth + 10) {
-                blocks.add(new DestroyableObject(x, y, blockWidth, blockHeight) {
-                });
+public class Block implements Colisionable {
+    public static final float WORLD_WIDTH = 1920;
+    public static final float WORLD_HEIGHT = 1080;
+    private static final float BLOCK_WIDTH = 0.09f * WORLD_WIDTH;
+    private static final float BLOCK_HEIGHT = 0.05f * WORLD_HEIGHT;
+
+    private final ArrayList<GameBlock> blocks;
+    private final OrthographicCamera camera;
+
+    public Block() {
+        this.blocks = new ArrayList<>();
+        this.camera = new OrthographicCamera();
+        this.camera.setToOrtho(false, WORLD_WIDTH, WORLD_HEIGHT);
+    }
+
+    public void createBlocks(int filas) {
+        float y = WORLD_HEIGHT - BLOCK_HEIGHT + 50;
+        for (int cont = 0; cont < filas; cont++) {
+            y -= BLOCK_HEIGHT + 20;
+            for (float x = 5; x < WORLD_WIDTH; x += BLOCK_WIDTH + 20) {
+                blocks.add(new GameBlock(x, y, BLOCK_WIDTH, BLOCK_HEIGHT));
             }
         }
     }
+
+
     private void destroy(int i) {
-        if (blocks.get(i).isDestroyed) {
-            blocks.remove(i);
-        }
+        blocks.remove(i);
+        BlockBreakerGame.puntaje++;
     }
-    public boolean isEmpty(){
+
+    public boolean isEmpty() {
         return blocks.isEmpty();
     }
-    public int blockCount(){
+
+    public int blockCount() {
         return blocks.size();
     }
 
@@ -44,26 +53,26 @@ public class Block implements Colisionable{
                 obj.getY() < other.getY() + other.getHeight() &&
                 obj.getY() + obj.getHeight() > other.getY();
     }
+
     @Override
     public boolean collision(GameObject ball) {
         for (int i = 0; i < blocks.size(); i++) {
-            if (collidesWith(blocks.get(i),ball)) {
-                blocks.get(i).isDestroyed = true;
+            if (collidesWith(blocks.get(i), ball)) {
                 destroy(i);
-                i--;
                 return true;
             }
         }
         return false;
     }
 
-    public void draw(ShapeRenderer shape){
-    	for (int i = 0; i < blocks.size(); i++) {
-            if (!blocks.get(i).isDestroyed) {
-                Random r = new Random(blocks.get(i).getX()+blocks.get(i).getY());
-                cc = new Color(0.1f+r.nextFloat(1), r.nextFloat(1), r.nextFloat(1), 10);
+    public void draw(ShapeRenderer shape) {
+        shape.setProjectionMatrix(camera.combined);
+        for (GameBlock block : blocks) {
+            if (!block.isDestroyed()) {
+                Random r = new Random((long) (block.getX() + block.getY()));
+                Color cc = new Color(0.1f + r.nextFloat(), r.nextFloat(), r.nextFloat(), 1);
                 shape.setColor(cc);
-                shape.rect(blocks.get(i).getX(), blocks.get(i).getY(), blocks.get(i).getWidth(), blocks.get(i).getHeight());
+                shape.rect(block.getX(), block.getY(), block.getWidth(), block.getHeight());
             }
         }
     }

@@ -5,37 +5,24 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import java.awt.*;
-
-public class Paddle {
-    private Rectangle rect;
-    private int x;
-    private int y;
-    private int width;
-    private int height;
-    
-    public Paddle(int x, int y, int ancho, int alto) {
-    	this.x = x;
-    	this.y= y;
-    	width = ancho;
-    	height = alto;
+public class Paddle extends GameObject{
+    public Paddle(float x, float y) {
+        super(x, y + 50, 0.16f * Block.WORLD_WIDTH, 0.03f * Block.WORLD_HEIGHT);
     }
-     
-    public int getX() {return x;}
-	public int getY() {return y;}
-	public int getWidth() {return width;}
-	public int getHeight() {return height;}
 
-	public void draw(ShapeRenderer shape){
+    public void draw(ShapeRenderer shape){
         shape.setColor(Color.BLUE);
-        int x2 = x; //= Gdx.input.getX();
-        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) x2 =x-15;
-        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) x2=x+15; 
-       // y = Gdx.graphics.getHeight() - Gdx.input.getY(); 
-        if (x2 > 0 && x2+width < Gdx.graphics.getWidth()) {
+        float x2 = x;
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) x2 =x-45;
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) x2=x+45;
+        if (x2 > 0 && x2+width < Block.WORLD_WIDTH) {
             x = x2;
+        } else if (x2 <= 0) {
+            x = 0;
+        } else if (x2+width >= Block.WORLD_WIDTH) {
+            x = Block.WORLD_WIDTH - width;
         }
         shape.rect(x, y, width, height);
     }
-    
 }
+
