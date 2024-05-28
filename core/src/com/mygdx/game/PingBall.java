@@ -3,19 +3,19 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-public class PingBall extends GameObject {
+public class PingBall extends GameObject implements Colisionable {
 	private int xSpeed;
 	public static int ySpeed;
 	private Color color;
 	private boolean isStill;
 
-	public PingBall(float x, float y, int size, int xSpeed, int ySpeed, boolean startsStill) {
+    public PingBall(float x, float y, int size, int xSpeed, int ySpeed, boolean startsStill) {
 		super(x, y, size * 2, size * 2);
 		this.xSpeed = xSpeed * 2;
 		PingBall.ySpeed = ySpeed * 2;
 		this.isStill = startsStill;
 		this.color = isStill ? Color.WHITE : Color.GREEN;
-	}
+    }
 
 	public boolean isStill() {
 		return isStill;
@@ -30,8 +30,7 @@ public class PingBall extends GameObject {
 		this.y = y;
 	}
 
-	public void draw(ShapeRenderer shape){
-
+	public void draw(ShapeRenderer shape) {
 		shape.setColor(color);
 		shape.rect(x, y, getWidth(), getHeight());
 	}
@@ -46,30 +45,49 @@ public class PingBall extends GameObject {
 		if (y > Block.WORLD_HEIGHT - height) {
 			ySpeed = -ySpeed;
 		}
-		// Asegurarse de que la pelota no se sale de la pantalla
 		if (x < 0) x = 0;
 		if (x > Block.WORLD_WIDTH - width) x = Block.WORLD_WIDTH - width;
 	}
 
+	@Override
+	public boolean collidesWith(GameObject obj, GameObject other) {
+		float objX = obj.getX();
+		float objY = obj.getY();
+		float objWidth = obj.getWidth();
+		float objHeight = obj.getHeight();
+		float otherX = other.getX();
+		float otherY = other.getY();
+		float otherWidth = other.getWidth();
+		float otherHeight = other.getHeight();
 
-	public void checkCollision(Paddle paddle) {
-		if(collidesWith(paddle)){
-			setColor(Color.GREEN);
-			ySpeed = -ySpeed;
-		}
-		else{
-			setColor(Color.WHITE);
-		}
+		boolean intersectsX = (objX < otherX + otherWidth) && (objX + objWidth > otherX);
+		boolean intersectsY = (objY < otherY + otherHeight) && (objY + objHeight > otherY);
+
+		return intersectsX && intersectsY;
 	}
 
-	private boolean collidesWith(GameObject gameObject) {
-		boolean intersectsX = (gameObject.getX() < x + width) && (gameObject.getX() + gameObject.getWidth() > x);
-		boolean intersectsY = (gameObject.getY() < y + height) && (gameObject.getY() + gameObject.getHeight() > y);
-		return intersectsX && intersectsY;
+	@Override
+	public boolean collision(GameObject other) {
+		if (other instanceof Paddle) {
+			if (collidesWith(this, other)) {
+				ySpeed = -ySpeed;
+				float newY = other.getY() + other.getHeight() + 1;
+				setPosition(getX(), newY);
+				setColor(Color.GREEN);
+				return true;
+			} else {
+				setColor(Color.WHITE);
+			}
+		}
+		return false;
 	}
 
 	public void setColor(Color color) {
 		this.color = color;
 	}
 
+	public void reset(float x, float y) {
+		setPosition(x, y);
+		setStill(true);
+	}
 }

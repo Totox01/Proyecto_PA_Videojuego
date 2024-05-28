@@ -10,8 +10,12 @@ public class Paddle extends GameObject{
         super(x, y + 50, 0.16f * Block.WORLD_WIDTH, 0.03f * Block.WORLD_HEIGHT);
     }
 
-    public void draw(ShapeRenderer shape){
+    public void draw(ShapeRenderer shape) {
         shape.setColor(Color.BLUE);
+        shape.rect(x, y, width, height);
+    }
+
+    public void mover(){
         float x2 = x;
         if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) x2 =x-45;
         if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) x2=x+45;
@@ -22,7 +26,6 @@ public class Paddle extends GameObject{
         } else if (x2+width >= Block.WORLD_WIDTH) {
             x = Block.WORLD_WIDTH - width;
         }
-        shape.rect(x, y, width, height);
     }
 }
 

@@ -3,7 +3,6 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -32,18 +31,22 @@ public class Block implements Colisionable {
         }
     }
 
+    public void clearBlocks() {
+        blocks.clear();
+    }
 
     private void destroy(int i) {
-        blocks.remove(i);
-        BlockBreakerGame.puntaje++;
+        if (i >= 0 && i < blocks.size()) {
+            GameBlock block = blocks.get(i);
+            if (!block.isDestroyed()) {
+                blocks.remove(i);
+                BlockBreakerGame.puntaje++;
+            }
+        }
     }
 
     public boolean isEmpty() {
         return blocks.isEmpty();
-    }
-
-    public int blockCount() {
-        return blocks.size();
     }
 
     @Override
@@ -57,13 +60,18 @@ public class Block implements Colisionable {
     @Override
     public boolean collision(GameObject ball) {
         for (int i = 0; i < blocks.size(); i++) {
-            if (collidesWith(blocks.get(i), ball)) {
+            GameBlock block = blocks.get(i);
+            if (block.isDestroyed()) {
+                continue; // Si el bloque ya está destruido, pasa al siguiente
+            }
+            if (collidesWith(block, ball)) {
                 destroy(i);
                 return true;
             }
         }
         return false;
     }
+
 
     public void draw(ShapeRenderer shape) {
         shape.setProjectionMatrix(camera.combined);

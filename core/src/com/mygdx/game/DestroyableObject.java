@@ -11,5 +11,4 @@ public abstract class DestroyableObject extends GameObject implements Destroyeab
     public boolean isDestroyed() {
         return destroyed;
     }
-
 }

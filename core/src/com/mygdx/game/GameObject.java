@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
 public abstract class GameObject {
     protected float x;
     protected float y;
@@ -26,4 +28,6 @@ public abstract class GameObject {
     public float getY() {
         return y;
     }
+
+    public abstract void draw(ShapeRenderer shape);
 }

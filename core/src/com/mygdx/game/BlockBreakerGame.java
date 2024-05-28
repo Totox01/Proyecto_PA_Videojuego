@@ -28,76 +28,108 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	private int nivel;
 
 	@Override
-	public void create () {
+	public void create() {
+		inicializarGraficos();
+		inicializarObjetos();
+	}
+
+	private void inicializarGraficos() {
 		camera = new OrthographicCamera();
 		viewport = new ExtendViewport(Block.WORLD_WIDTH, Block.WORLD_HEIGHT, camera);
 		batch = new SpriteBatch();
 		font = new BitmapFont();
 		font.getData().setScale(6, 4);
 		shape = new ShapeRenderer();
-		pad = new Paddle(Math.round(viewport.getWorldWidth()/2-50),40);
+	}
+
+	private void inicializarObjetos() {
+		pad = new Paddle(Math.round(viewport.getWorldWidth() / 2 - 50), 40);
 		block = new Block();
 		nivel = 1;
-		block.createBlocks(2+nivel);
-		ball = new PingBall(pad.getX()+pad.getWidth()/2-5, pad.getY()+pad.getHeight()+11, 10, 5, 7, true);
+		block.createBlocks(2 + nivel);
+		ball = new PingBall(pad.getX() + pad.getWidth() / 2 - 5, pad.getY() + pad.getHeight() + 11, 10, 5, 7, true);
 		vidas = 3;
 		puntaje = 0;
 	}
 
-	public void dibujaTextos() {
-		camera.update();
-		batch.setProjectionMatrix(camera.combined);
-		batch.begin();
-		GlyphLayout layout = new GlyphLayout();
-		String vidasText = "Vidas : " + vidas;
-		layout.setText(font, vidasText);
-		float vidasWidth = layout.width;
-		font.draw(batch, "Puntos: " + puntaje, 10, 70); // Mueve las letras más hacia el centro
-		font.draw(batch, vidasText, viewport.getWorldWidth() - vidasWidth - 150, 70); // Mueve las letras más hacia el centro
-		batch.end();
-	}
-
 	@Override
-	public void render () {
+	public void render() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		viewport.apply();
 		shape.setProjectionMatrix(camera.combined);
 		shape.begin(ShapeRenderer.ShapeType.Filled);
+
 		pad.draw(shape);
-		// monitorear inicio del juego
+		pad.mover();
+
+		movimientoPelota();
+
+		if (ball.getY() < 0) {
+			manejarLimites();
+		}
+
+		if (vidas <= 0) {
+			resetGame();
+		}
+
+		if (block.isEmpty()) {
+			manejarNiveles();
+		}
+
+		block.draw(shape);
+		manejarColisiones();
+
+		shape.end();
+		dibujaTextos();
+	}
+
+	private void movimientoPelota() {
 		if (ball.isStill()) {
-			ball.setPosition(pad.getX()+pad.getWidth()/2-5,pad.getY()+pad.getHeight()+11);
+			ball.setPosition(pad.getX() + pad.getWidth() / 2 - 5, pad.getY() + pad.getHeight() + 11);
 			if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) ball.setStill(false);
 		} else {
 			ball.update();
 		}
-		//verificar si se fue la bola x abajo
-		if (ball.getY()<0) {
-			vidas--;
-			ball = new PingBall(pad.getX()+pad.getWidth()/2-5, pad.getY()+pad.getHeight()+11, 10, 5, 7, true);
-		}
-		// verificar game over
-		if (vidas<=0) {
-			vidas = 3;
-			nivel = 1;
-			block.createBlocks(2+nivel);
-		}
-		// verificar si el nivel se terminó
-		if (block.isEmpty()) {
-			nivel++;
-			block.createBlocks(2+nivel);
-			ball = new PingBall(pad.getX()+pad.getWidth()/2-5, pad.getY()+pad.getHeight()+11, 10, 5, 7, true);
-		}
+	}
 
+	private void manejarLimites() {
+		vidas--;
+		ball.reset(pad.getX() + pad.getWidth() / 2 - 5, pad.getY() + pad.getHeight() + 11);
+	}
 
-		block.draw(shape);
-		if (block.collision(ball)){
+	private void resetGame() {
+		vidas = 3;
+		nivel = 1;
+		puntaje = 0;
+		block.clearBlocks();
+		block.createBlocks(2 + nivel);
+	}
+
+	private void manejarNiveles() {
+		nivel++;
+		block.createBlocks(2 + nivel);
+		ball.reset(pad.getX() + pad.getWidth() / 2 - 5, pad.getY() + pad.getHeight() + 11);
+	}
+
+	private void manejarColisiones() {
+		if (block.collision(ball)) {
 			ySpeed = - ySpeed;
 		}
-		ball.checkCollision(pad);
+		ball.collision(pad);
 		ball.draw(shape);
-		shape.end();
-		dibujaTextos();
+	}
+
+	private void dibujaTextos() {
+		camera.update();
+		batch.setProjectionMatrix(camera.combined);
+		batch.begin();
+		GlyphLayout layout = new GlyphLayout();
+		String vidasText = "Vidas: " + vidas;
+		layout.setText(font, vidasText);
+		float vidasWidth = layout.width;
+		font.draw(batch, "Puntos: " + puntaje, 10, 70);
+		font.draw(batch, vidasText, viewport.getWorldWidth() - vidasWidth - 150, 70);
+		batch.end();
 	}
 
 	@Override
@@ -106,7 +138,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	}
 
 	@Override
-	public void dispose () {
+	public void dispose() {
 		batch.dispose();
 		font.dispose();
 		shape.dispose();
