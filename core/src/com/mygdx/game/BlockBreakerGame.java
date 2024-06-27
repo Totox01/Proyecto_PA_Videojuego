@@ -42,7 +42,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	}
 
 	private void inicializarObjetos() {
-		pad = new Paddle(Math.round(viewport.getWorldWidth() / 2 - 50), 40);
+		pad = Paddle.getInstance(Math.round(viewport.getWorldWidth() / 2 - 50), 40);
 		block = new Block();
 		nivel = 1;
 		block.createBlocks(2 + nivel);

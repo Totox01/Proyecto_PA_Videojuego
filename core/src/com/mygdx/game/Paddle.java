@@ -6,10 +6,18 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class Paddle extends GameObject {
+    private static Paddle instance = null;
     private static final float SPEED = 1250; // Ajuste de la velocidad del paddle
 
     public Paddle(float x, float y) {
         super(x, y + 50, 0.16f * Block.WORLD_WIDTH, 0.03f * Block.WORLD_HEIGHT);
+    }
+
+    public static Paddle getInstance(float x, float y) {
+        if (instance == null) {
+            instance = new Paddle(x, y);
+        }
+        return instance;
     }
 
     public void draw(ShapeRenderer shape) {
