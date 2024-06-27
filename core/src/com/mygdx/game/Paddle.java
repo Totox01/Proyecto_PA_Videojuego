@@ -9,7 +9,7 @@ public class Paddle extends GameObject {
     private static Paddle instance = null;
     private static final float SPEED = 1250; // Ajuste de la velocidad del paddle
 
-    public Paddle(float x, float y) {
+    private Paddle(float x, float y) {
         super(x, y + 50, 0.16f * Block.WORLD_WIDTH, 0.03f * Block.WORLD_HEIGHT);
     }
 
@@ -19,7 +19,6 @@ public class Paddle extends GameObject {
         }
         return instance;
     }
-
     public void draw(ShapeRenderer shape) {
         shape.setColor(Color.BLUE);
         shape.rect(x, y, width, height);

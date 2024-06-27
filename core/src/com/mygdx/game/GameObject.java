@@ -14,7 +14,7 @@ public abstract class GameObject {
         this.width = width;
         this.height = height;
     }
-
+    public abstract void draw(ShapeRenderer shape);
 
     public float getHeight() {
         return height;
@@ -28,6 +28,4 @@ public abstract class GameObject {
     public float getY() {
         return y;
     }
-
-    public abstract void draw(ShapeRenderer shape);
 }

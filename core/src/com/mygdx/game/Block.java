@@ -77,10 +77,7 @@ public class Block implements Colisionable {
         shape.setProjectionMatrix(camera.combined);
         for (GameBlock block : blocks) {
             if (!block.isDestroyed()) {
-                Random r = new Random((long) (block.getX() + block.getY()));
-                Color cc = new Color(0.1f + r.nextFloat(), r.nextFloat(), r.nextFloat(), 1);
-                shape.setColor(cc);
-                shape.rect(block.getX(), block.getY(), block.getWidth(), block.getHeight());
+                block.draw(shape);
             }
         }
     }

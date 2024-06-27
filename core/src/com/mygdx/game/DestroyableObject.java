@@ -1,5 +1,7 @@
 package com.mygdx.game;
 
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+
 public abstract class DestroyableObject extends GameObject implements Destroyeable {
     private final boolean destroyed;
 
@@ -11,4 +13,5 @@ public abstract class DestroyableObject extends GameObject implements Destroyeab
     public boolean isDestroyed() {
         return destroyed;
     }
+    public abstract void draw(ShapeRenderer shape);
 }
