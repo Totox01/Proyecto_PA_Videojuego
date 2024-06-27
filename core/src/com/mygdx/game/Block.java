@@ -1,10 +1,8 @@
 package com.mygdx.game;
 
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import java.util.ArrayList;
-import java.util.Random;
 
 public class Block implements Colisionable {
     public static final float WORLD_WIDTH = 1920;
