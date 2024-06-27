@@ -12,7 +12,6 @@ import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 
-import static com.mygdx.game.PingBall.ySpeed;
 
 public class BlockBreakerGame extends ApplicationAdapter {
 	private OrthographicCamera camera;
@@ -47,7 +46,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		block = new Block();
 		nivel = 1;
 		block.createBlocks(2 + nivel);
-		ball = new PingBall(pad.getX() + pad.getWidth() / 2 - 5, pad.getY() + pad.getHeight() + 11, 10, 5, 7, true);
+		ball = new PingBall(pad.getX() + pad.getWidth() / 2 - 10, pad.getY() + pad.getHeight() + 1, 10, 5, 7, true);
 		vidas = 3;
 		puntaje = 0;
 	}
@@ -85,7 +84,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 
 	private void movimientoPelota() {
 		if (ball.isStill()) {
-			ball.setPosition(pad.getX() + pad.getWidth() / 2 - 5, pad.getY() + pad.getHeight() + 11);
+			ball.setPosition(pad.getX() + pad.getWidth() / 2 - ball.getWidth() / 2, pad.getY() + pad.getHeight() + 1);
 			if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) ball.setStill(false);
 		} else {
 			ball.update();
@@ -94,7 +93,13 @@ public class BlockBreakerGame extends ApplicationAdapter {
 
 	private void manejarLimites() {
 		vidas--;
-		ball.reset(pad.getX() + pad.getWidth() / 2 - 5, pad.getY() + pad.getHeight() + 11);
+		ball.reset(pad.getX() + pad.getWidth() / 2 - ball.getWidth() / 2, pad.getY() + pad.getHeight() + 1);
+	}
+
+	private void manejarNiveles() {
+		nivel++;
+		block.createBlocks(2 + nivel);
+		ball.reset(pad.getX() + pad.getWidth() / 2 - ball.getWidth() / 2, pad.getY() + pad.getHeight() + 1);
 	}
 
 	private void resetGame() {
@@ -105,15 +110,11 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		block.createBlocks(2 + nivel);
 	}
 
-	private void manejarNiveles() {
-		nivel++;
-		block.createBlocks(2 + nivel);
-		ball.reset(pad.getX() + pad.getWidth() / 2 - 5, pad.getY() + pad.getHeight() + 11);
-	}
+
 
 	private void manejarColisiones() {
 		if (block.collision(ball)) {
-			ySpeed = - ySpeed;
+			ball.handleBlockCollision(); // Manejar colisión con bloques
 		}
 		ball.collision(pad);
 		ball.draw(shape);
