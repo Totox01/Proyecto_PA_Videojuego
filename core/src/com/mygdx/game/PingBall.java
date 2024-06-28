@@ -4,7 +4,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-
 public class PingBall extends GameObject implements Colisionable {
 	private float speed;
 	private float xSpeed;

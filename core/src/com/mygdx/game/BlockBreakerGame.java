@@ -3,6 +3,8 @@ package com.mygdx.game;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -11,7 +13,6 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
-
 
 public class BlockBreakerGame extends ApplicationAdapter {
 	private OrthographicCamera camera;
@@ -26,10 +27,21 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	public static int puntaje;
 	private int nivel;
 
+	// Hitsounds y Background
+	private Sound bounceSound;
+	private Sound breakSound;
+	private Music backgroundMusic;
+
+	// Menu
+	private OptionsMenu optionsMenu;
+
 	@Override
 	public void create() {
 		inicializarGraficos();
 		inicializarObjetos();
+		inicializarSonidos();
+		inicializarMusicaDeFondo();
+		optionsMenu = new OptionsMenu(this, viewport);
 	}
 
 	private void inicializarGraficos() {
@@ -51,8 +63,37 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		puntaje = 0;
 	}
 
+	private void inicializarMusicaDeFondo() {
+		backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+		backgroundMusic.setLooping(true); // Configurar para que la música se repita
+		backgroundMusic.setVolume(0.3f);
+		backgroundMusic.play(); // Iniciar la reproducción de la música
+	}
+
+	public Music getBackgroundMusic() {
+		return backgroundMusic;
+	}
+
+	private void inicializarSonidos() {
+		bounceSound = Gdx.audio.newSound(Gdx.files.internal("bounce.wav"));
+		breakSound = Gdx.audio.newSound(Gdx.files.internal("break.wav"));
+	}
+
 	@Override
 	public void render() {
+		if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) {
+			optionsMenu.toggleVisibility();
+		}
+
+		if (optionsMenu.isVisible()) {
+			optionsMenu.update();
+			drawMenu();
+		} else {
+			gameRender();
+		}
+	}
+
+	private void gameRender() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		viewport.apply();
 		shape.setProjectionMatrix(camera.combined);
@@ -114,9 +155,12 @@ public class BlockBreakerGame extends ApplicationAdapter {
 
 	private void manejarColisiones() {
 		if (block.collision(ball)) {
+			breakSound.play();
 			ball.handleBlockCollision(); // Manejar colisión con bloques
 		}
-		ball.collision(pad);
+		if (!ball.isStill() && ball.collision(pad)) {
+			bounceSound.play();
+		}
 		ball.draw(shape);
 	}
 
@@ -129,8 +173,15 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		layout.setText(font, vidasText);
 		float vidasWidth = layout.width;
 		font.draw(batch, "Puntos: " + puntaje, 10, 70);
-		font.draw(batch, vidasText, viewport.getWorldWidth() - vidasWidth - 150, 70);
+		font.draw(batch, vidasText, viewport.getWorldWidth() - vidasWidth - 10, 70);
 		batch.end();
+	}
+
+	private void drawMenu() {
+		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		viewport.apply();
+		shape.setProjectionMatrix(camera.combined);
+		optionsMenu.render(batch, shape);
 	}
 
 	@Override
@@ -143,6 +194,9 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		batch.dispose();
 		font.dispose();
 		shape.dispose();
+		bounceSound.dispose();
+		breakSound.dispose();
+		backgroundMusic.dispose();
 	}
 }
 
