@@ -11,13 +11,20 @@ public class PingBall extends GameObject implements Colisionable {
 	private Color color;
 	private boolean isStill;
 
-	public PingBall(float x, float y, int size, float xSpeed, float ySpeed, boolean startsStill) {
+	public PingBall(float x, float y, int size, boolean startsStill) {
 		super(x, y, size * 2, size * 2);
-		this.xSpeed = 1000;
-		this.ySpeed = 1000;
-		this.speed = 1000;
+		this.xSpeed = 500; // Adjust the initial speed of the ball
+		this.ySpeed = 500; // Adjust the initial speed of the ball
+		this.speed = 500; // Adjust the initial speed of the ball
 		this.isStill = startsStill;
 		this.color = isStill ? Color.WHITE : Color.GREEN;
+	}
+
+	public float getSpeed() {
+		return speed;
+	}
+	public void setSpeed(float speed) {
+		this.speed = speed;
 	}
 
 	public boolean isStill() {
@@ -124,5 +131,23 @@ public class PingBall extends GameObject implements Colisionable {
 	public void reset(float x, float y) {
 		setPosition(x, y);
 		setStill(true);
+	}
+
+	public void slowDown() {
+		this.xSpeed *= 0.8f;
+		this.ySpeed *= 0.8f;
+	}
+
+	public void speedUp() {
+		this.xSpeed *= 1.2f;
+		this.ySpeed *= 1.2f;
+	}
+
+	public void move(Paddle pad) {
+		if (isStill()) {
+			setPosition(pad.getX() + pad.getWidth() / 2 - getWidth() / 2, pad.getY() + pad.getHeight() + 1);
+		} else {
+			update();
+		}
 	}
 }

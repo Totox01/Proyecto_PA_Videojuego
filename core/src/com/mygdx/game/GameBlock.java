@@ -3,18 +3,49 @@ package com.mygdx.game;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
-import java.util.Random;
-
 public class GameBlock extends DestroyableObject {
-    public GameBlock(float x, float y, float width, float height) {
-        super(x, y, width, height);
+    private final Color color;
+
+    GameBlock(Builder builder) {
+        super(builder.x, builder.y, builder.width, builder.height);
+        this.color = builder.color;
+    }
+
+    public static class Builder {
+        private final float x;
+        private final float y;
+        private float width;
+        private float height;
+        private Color color;
+
+        public Builder(float x, float y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public Builder width(float width) {
+            this.width = width;
+            return this;
+        }
+
+        public Builder height(float height) {
+            this.height = height;
+            return this;
+        }
+
+        public Builder color(Color color) {
+            this.color = color;
+            return this;
+        }
+
+        public GameBlock build() {
+            return new GameBlock(this);
+        }
     }
 
     @Override
     public void draw(ShapeRenderer shape) {
-        Random r = new Random((long) (this.getX() + this.getY()));
-        Color cc = new Color(0.1f + r.nextFloat(), r.nextFloat(), r.nextFloat(), 1);
-        shape.setColor(cc);
+        shape.setColor(this.color);
         shape.rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
 }

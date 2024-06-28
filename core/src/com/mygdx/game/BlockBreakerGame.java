@@ -73,7 +73,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		block = new Block();
 		nivel = 1;
 		block.createBlocks(2 + nivel);
-		ball = new PingBall(pad.getX() + pad.getWidth() / 2 - 10, pad.getY() + pad.getHeight() + 1, 10, 5, 7, true);
+		ball = new PingBall(pad.getX() + pad.getWidth() / 2 - 10, pad.getY() + pad.getHeight() + 1, 10, true);
 		vidas = 3;
 		puntaje = 0;
 	}
@@ -134,10 +134,13 @@ public class BlockBreakerGame extends ApplicationAdapter {
 			gameRender();
 		}
 	}
-//a
+
 	private void gameRender() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+		block.update(Gdx.graphics.getDeltaTime());
 		viewport.apply();
+		shape.setProjectionMatrix(camera.combined);
+
 		batch.setProjectionMatrix(camera.combined);
 
 		timeSinceLastChange += Gdx.graphics.getDeltaTime();
@@ -159,11 +162,12 @@ public class BlockBreakerGame extends ApplicationAdapter {
 
 		batch.end();
 
-		shape.setProjectionMatrix(camera.combined);
 		shape.begin(ShapeRenderer.ShapeType.Filled);
 
 		pad.draw(shape);
 		pad.mover();
+		pad.update(ball);
+		ball.move(pad);
 
 		movimientoPelota();
 
@@ -181,22 +185,22 @@ public class BlockBreakerGame extends ApplicationAdapter {
 
 		block.draw(shape);
 		manejarColisiones();
+		ball.draw(shape);
+		checkUserInput();
 
-		shape.end();
+		shape.end(); // Make sure to call end() here before starting another shape batch
 		dibujaTextos();
 	}
 
 	private void movimientoPelota() {
-		if (ball.isStill()) {
-			ball.setPosition(pad.getX() + pad.getWidth() / 2 - ball.getWidth() / 2, pad.getY() + pad.getHeight() + 1);
-			if (Gdx.input.isKeyPressed(Input.Keys.SPACE)) ball.setStill(false);
-		} else {
+		if (!ball.isStill()) {
 			ball.update();
 		}
 	}
 
 	private void manejarLimites() {
 		vidas--;
+		pad.reset(); // Reset the paddle when a life is lost
 		ball.reset(pad.getX() + pad.getWidth() / 2 - ball.getWidth() / 2, pad.getY() + pad.getHeight() + 1);
 	}
 
@@ -211,7 +215,10 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		nivel = 1;
 		puntaje = 0;
 		block.clearBlocks();
+		block.clearPowerUps(); // Remove all active power-ups
 		block.createBlocks(2 + nivel);
+		pad.reset(); // Reset the paddle
+		ball.reset(pad.getX() + pad.getWidth() / 2 - ball.getWidth() / 2, pad.getY() + pad.getHeight() + 1);
 	}
 
 
@@ -236,7 +243,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		layout.setText(font, vidasText);
 		float vidasWidth = layout.width;
 		font.draw(batch, "Puntos: " + puntaje, 10, 70);
-		font.draw(batch, vidasText, viewport.getWorldWidth() - vidasWidth - 10, 70);
+		font.draw(batch, vidasText, viewport.getWorldWidth() - vidasWidth - 150, 70);
 		batch.end();
 	}
 
@@ -245,6 +252,12 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		viewport.apply();
 		shape.setProjectionMatrix(camera.combined);
 		optionsMenu.render(batch, shape);
+	}
+
+	private void checkUserInput() {
+		if (Gdx.input.isKeyPressed(Input.Keys.SPACE) && ball.isStill()) {
+			ball.setStill(false);
+		}
 	}
 
 	@Override
