@@ -43,6 +43,10 @@ public class OptionsMenu {
             game.getBackgroundMusic().setVolume(volume);
         }
 
+        if (Gdx.input.isKeyJustPressed(Input.Keys.RIGHT)) {
+            game.nextTrack();
+        }
+
         if (Gdx.input.isKeyJustPressed(Input.Keys.R)) {
             toggleVisibility();
         }
@@ -51,6 +55,7 @@ public class OptionsMenu {
             Gdx.app.exit();
         }
     }
+
 
     public void render(SpriteBatch batch, ShapeRenderer shape) {
         if (!visible) return;
@@ -61,11 +66,12 @@ public class OptionsMenu {
         shape.end();
 
         batch.begin();
-        font.draw(batch, "Options Menu", viewport.getWorldWidth() / 2 - 250, viewport.getWorldHeight() / 2 + 500);
-        font.draw(batch, "Volume: " + (int) (volume * 100) + "%", viewport.getWorldWidth() / 2 - 230, viewport.getWorldHeight() / 2 + 300);
-        font.draw(batch, "Presiona UP/DOWN para ajustar el volume", viewport.getWorldWidth() / 2 - 850, viewport.getWorldHeight() / 2 + 100);
-        font.draw(batch, "Press R to resume", viewport.getWorldWidth() / 2 + 50, viewport.getWorldHeight() / 2 - 200);
-        font.draw(batch, "Press E to exit", viewport.getWorldWidth() / 2 - 750, viewport.getWorldHeight() / 2 - 200);
+        font.draw(batch, "Menu de opciones", viewport.getWorldWidth() / 2 - 320, viewport.getWorldHeight() / 2 + 500);
+        font.draw(batch, "Volumen: " + (int) (volume * 100) + "%", viewport.getWorldWidth() / 2 - 270, viewport.getWorldHeight() / 2 + 250);
+        font.draw(batch, "Press UP/DOWN para ajustar el volume", viewport.getWorldWidth() / 2 - 830, viewport.getWorldHeight() / 2 + 100);
+        font.draw(batch, "Press RIGHT para cambiar de cancion", viewport.getWorldWidth() / 2 - 800, viewport.getWorldHeight() / 2 - 50);
+        font.draw(batch, "Press R para continuar", viewport.getWorldWidth() / 2 + 0, viewport.getWorldHeight() / 2 - 300);
+        font.draw(batch, "Press E para salir", viewport.getWorldWidth() / 2 - 870, viewport.getWorldHeight() / 2 - 300);
         batch.end();
     }
 }

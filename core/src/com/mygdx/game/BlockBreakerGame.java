@@ -7,12 +7,16 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockBreakerGame extends ApplicationAdapter {
 	private OrthographicCamera camera;
@@ -27,13 +31,23 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	public static int puntaje;
 	private int nivel;
 
+
 	// Hitsounds y Background
 	private Sound bounceSound;
 	private Sound breakSound;
 	private Music backgroundMusic;
+	private List<Music> musicList;
+	private int currentTrackIndex;
 
 	// Menu
 	private OptionsMenu optionsMenu;
+
+	// Backgrounds
+	private List<Texture> backgrounds;
+	private int currentBackgroundIndex;
+	private float transitionAlpha;
+	private float transitionTime;
+	private float timeSinceLastChange;
 
 	@Override
 	public void create() {
@@ -41,6 +55,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		inicializarObjetos();
 		inicializarSonidos();
 		inicializarMusicaDeFondo();
+		inicializarFondos();
 		optionsMenu = new OptionsMenu(this, viewport);
 	}
 
@@ -64,10 +79,25 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	}
 
 	private void inicializarMusicaDeFondo() {
-		backgroundMusic = Gdx.audio.newMusic(Gdx.files.internal("background.mp3"));
+		musicList = new ArrayList<>();
+		musicList.add(Gdx.audio.newMusic(Gdx.files.internal("background1.mp3")));
+		musicList.add(Gdx.audio.newMusic(Gdx.files.internal("background2.mp3")));
+		musicList.add(Gdx.audio.newMusic(Gdx.files.internal("background3.mp3")));
+
+		currentTrackIndex = 0;
+		backgroundMusic = musicList.get(currentTrackIndex);
 		backgroundMusic.setLooping(true); // Configurar para que la música se repita
 		backgroundMusic.setVolume(0.3f);
 		backgroundMusic.play(); // Iniciar la reproducción de la música
+	}
+
+	public void nextTrack() {
+		backgroundMusic.stop();
+		currentTrackIndex = (currentTrackIndex + 1) % musicList.size();
+		backgroundMusic = musicList.get(currentTrackIndex);
+		backgroundMusic.setLooping(true);
+		backgroundMusic.setVolume(0.3f);
+		backgroundMusic.play();
 	}
 
 	public Music getBackgroundMusic() {
@@ -77,6 +107,18 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	private void inicializarSonidos() {
 		bounceSound = Gdx.audio.newSound(Gdx.files.internal("bounce.wav"));
 		breakSound = Gdx.audio.newSound(Gdx.files.internal("break.wav"));
+	}
+
+	private void inicializarFondos() {
+		backgrounds = new ArrayList<>();
+		backgrounds.add(new Texture(Gdx.files.internal("background1.png")));
+		backgrounds.add(new Texture(Gdx.files.internal("background2.png")));
+		backgrounds.add(new Texture(Gdx.files.internal("background3.png")));
+
+		currentBackgroundIndex = 0;
+		transitionAlpha = 0;
+		transitionTime = 40.0f; // Duración de la transición en segundos
+		timeSinceLastChange = 0;
 	}
 
 	@Override
@@ -92,10 +134,31 @@ public class BlockBreakerGame extends ApplicationAdapter {
 			gameRender();
 		}
 	}
-
+//a
 	private void gameRender() {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		viewport.apply();
+		batch.setProjectionMatrix(camera.combined);
+
+		timeSinceLastChange += Gdx.graphics.getDeltaTime();
+
+		if (timeSinceLastChange >= transitionTime) {
+			currentBackgroundIndex = (currentBackgroundIndex + 1) % backgrounds.size();
+			timeSinceLastChange = 0;
+		}
+
+		transitionAlpha = Math.min(1, timeSinceLastChange / transitionTime);
+
+		batch.begin();
+		batch.draw(backgrounds.get(currentBackgroundIndex), 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+
+		int nextBackgroundIndex = (currentBackgroundIndex + 1) % backgrounds.size();
+		batch.setColor(1, 1, 1, transitionAlpha);
+		batch.draw(backgrounds.get(nextBackgroundIndex), 0, 0, viewport.getWorldWidth(), viewport.getWorldHeight());
+		batch.setColor(1, 1, 1, 1);
+
+		batch.end();
+
 		shape.setProjectionMatrix(camera.combined);
 		shape.begin(ShapeRenderer.ShapeType.Filled);
 
@@ -197,6 +260,9 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		bounceSound.dispose();
 		breakSound.dispose();
 		backgroundMusic.dispose();
+		for (Texture texture : backgrounds) {
+			texture.dispose();
+		}
 	}
 }
 
