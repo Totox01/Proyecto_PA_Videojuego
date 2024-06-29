@@ -27,20 +27,21 @@ public class Block implements Colisionable {
         for (int cont = 0; cont < filas; cont++) {
             y -= BLOCK_HEIGHT + 20;
             for (float x = 5; x < WORLD_WIDTH; x += BLOCK_WIDTH + 20) {
-                if (Math.random() < 0.1) { // 10% chance to create a special block
+                if (Math.random() < 0.1) {
+                    Color customColor2 = new Color(94/255f, 68/255f, 235/255f, 1f);
                     SpecialBlock block = new SpecialBlock.Builder(x, y)
                             .width(BLOCK_WIDTH)
                             .height(BLOCK_HEIGHT)
-                            .color(Color.GOLD) // Special blocks are gold
-                            .powerUp(x, y) // Pass the x and y coordinates to the powerUp method
+                            .color(customColor2)
+                            .powerUp(x, y)
                             .build();
                     blocks.add(block);
                 }else {
-                    Color randomColor = new Color((float) Math.random(), (float) Math.random(), (float) Math.random(), 1);
+                    Color customColor = new Color(183/255f, 226/255f, 251/255f, 1f);
                     GameBlock block = new GameBlock.Builder(x, y)
                             .width(BLOCK_WIDTH)
                             .height(BLOCK_HEIGHT)
-                            .color(randomColor) // Normal blocks are a random color
+                            .color(customColor)
                             .build();
                     blocks.add(block);
                 }
@@ -56,7 +57,6 @@ public class Block implements Colisionable {
         if (i >= 0 && i < blocks.size()) {
             GameBlock block = blocks.get(i);
             if (!block.isDestroyed()) {
-                // If the block is a special block, create a power-up
                 if (block instanceof SpecialBlock) {
                     PowerUp powerUp = ((SpecialBlock) block).getPowerUp();
                     powerUps.add(powerUp);
@@ -90,7 +90,7 @@ public class Block implements Colisionable {
         for (int i = 0; i < blocks.size(); i++) {
             GameBlock block = blocks.get(i);
             if (block.isDestroyed()) {
-                continue; // Si el bloque ya está destruido, pasa al siguiente
+                continue;
             }
             if (collidesWith(block, ball)) {
                 destroy(i);
@@ -98,11 +98,10 @@ public class Block implements Colisionable {
             }
         }
 
-        // Check for collisions between the paddle and power-ups
         for (int i = 0; i < powerUps.size(); i++) {
             PowerUp powerUp = powerUps.get(i);
             if (collidesWith(powerUp, Paddle.getInstance(0, 0))) {
-                powerUp.applyEffect(Paddle.getInstance(0, 0), ball); // Apply the power-up effect to the paddle
+                powerUp.applyEffect(Paddle.getInstance(0, 0), ball);
                 powerUps.remove(i);
                 i--;
             }

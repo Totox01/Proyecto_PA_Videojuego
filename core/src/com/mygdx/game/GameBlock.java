@@ -4,7 +4,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 
 public class GameBlock extends DestroyableObject {
-    private final Color color;
+    protected final Color color;
 
     GameBlock(Builder builder) {
         super(builder.x, builder.y, builder.width, builder.height);
@@ -41,6 +41,12 @@ public class GameBlock extends DestroyableObject {
         public GameBlock build() {
             return new GameBlock(this);
         }
+    }
+
+    @Override
+    public void update(float deltaTime) {
+        float speed = 100;
+        this.y -= speed * deltaTime;
     }
 
     @Override

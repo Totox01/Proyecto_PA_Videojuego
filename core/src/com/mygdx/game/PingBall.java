@@ -13,6 +13,7 @@ public class PingBall extends GameObject implements Colisionable {
 
 	public PingBall(float x, float y, int size, boolean startsStill) {
 		super(x, y, size * 2, size * 2);
+		setUpdateStrategy(new PingBallUpdateStrategy());
 		this.xSpeed = 500; // Adjust the initial speed of the ball
 		this.ySpeed = 500; // Adjust the initial speed of the ball
 		this.speed = 500; // Adjust the initial speed of the ball
@@ -40,12 +41,21 @@ public class PingBall extends GameObject implements Colisionable {
 		this.y = y;
 	}
 
+	public void setX(float x) {
+		this.x = x;
+	}
+
+	public void setY(float y) {
+		this.y = y;
+	}
+
 	public void draw(ShapeRenderer shape) {
 		shape.setColor(color);
 		shape.rect(x, y, getWidth(), getHeight());
 	}
 
-	public void update() {
+	@Override
+	public void update(float deltaTime) {
 		if (isStill) return;
 		x += xSpeed * Gdx.graphics.getDeltaTime();
 		y += ySpeed * Gdx.graphics.getDeltaTime();
@@ -147,7 +157,7 @@ public class PingBall extends GameObject implements Colisionable {
 		if (isStill()) {
 			setPosition(pad.getX() + pad.getWidth() / 2 - getWidth() / 2, pad.getY() + pad.getHeight() + 1);
 		} else {
-			update();
+			update(Gdx.graphics.getDeltaTime());
 		}
 	}
 }

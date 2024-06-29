@@ -10,18 +10,19 @@ import java.util.ArrayList;
 public class Paddle extends GameObject {
     private final ArrayList<PowerUp> activePowerUps;
     private static Paddle instance = null;
-    private static final float SPEED = 1250; // Ajuste de la velocidad del paddle
+    private static final float SPEED = 1250;
     private final float initialWidth;
 
     public Paddle(float x, float y) {
         super(x, y, 0.16f * Block.WORLD_WIDTH, 0.03f * Block.WORLD_HEIGHT);
+        setUpdateStrategy(new PaddleUpdateStrategy());
         initialWidth = width;
         this.activePowerUps = new ArrayList<>();
     }
 
     public void reset() {
-        x = (Block.WORLD_WIDTH / 2) - (width / 2); // Center the paddle
-        width = initialWidth; // Reset the paddle width
+        x = (Block.WORLD_WIDTH / 2) - (width / 2);
+        width = initialWidth;
     }
 
     public static Paddle getInstance(float x, float y) {
@@ -29,6 +30,10 @@ public class Paddle extends GameObject {
             instance = new Paddle(x, y);
         }
         return instance;
+    }
+
+    public void setX(float x) {
+        this.x = x;
     }
 
     public void setWidth(float width) {
@@ -61,12 +66,20 @@ public class Paddle extends GameObject {
         this.width *= 0.8f;
     }
 
-    public void update(PingBall pingBall) { // Remove the unused deltaTime parameter
-        // Check for active power-ups and remove the ones that are no longer active
+    public void update(float deltaTime) {
+        if (Gdx.input.isKeyPressed(Input.Keys.LEFT)) {
+            x -= SPEED * deltaTime;
+        }
+        if (Gdx.input.isKeyPressed(Input.Keys.RIGHT)) {
+            x += SPEED * deltaTime;
+        }
+    }
+
+    public void update(PingBall pingBall) {
         for (int i = 0; i < activePowerUps.size(); i++) {
             PowerUp powerUp = activePowerUps.get(i);
             if (!powerUp.isActive()) {
-                powerUp.removeEffect(this, pingBall); // Pass the PingBall object to the removeEffect method
+                powerUp.removeEffect(this, pingBall);
                 activePowerUps.remove(i);
                 i--;
             }

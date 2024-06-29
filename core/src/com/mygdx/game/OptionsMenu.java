@@ -10,11 +10,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer.ShapeType;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class OptionsMenu {
-    private BitmapFont font;
+    private final BitmapFont font;
     private boolean visible;
     private float volume;
-    private BlockBreakerGame game;
-    private Viewport viewport;
+    private final BlockBreakerGame game;
+    private final Viewport viewport;
 
     public OptionsMenu(BlockBreakerGame game, Viewport viewport) {
         this.game = game;

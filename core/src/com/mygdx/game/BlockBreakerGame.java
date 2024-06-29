@@ -188,19 +188,19 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		ball.draw(shape);
 		checkUserInput();
 
-		shape.end(); // Make sure to call end() here before starting another shape batch
+		shape.end();
 		dibujaTextos();
 	}
 
 	private void movimientoPelota() {
 		if (!ball.isStill()) {
-			ball.update();
+			ball.update(Gdx.graphics.getDeltaTime());
 		}
 	}
 
 	private void manejarLimites() {
 		vidas--;
-		pad.reset(); // Reset the paddle when a life is lost
+		pad.reset();
 		ball.reset(pad.getX() + pad.getWidth() / 2 - ball.getWidth() / 2, pad.getY() + pad.getHeight() + 1);
 	}
 
@@ -215,7 +215,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 		nivel = 1;
 		puntaje = 0;
 		block.clearBlocks();
-		block.clearPowerUps(); // Remove all active power-ups
+		block.clearPowerUps();
 		block.createBlocks(2 + nivel);
 		pad.reset(); // Reset the paddle
 		ball.reset(pad.getX() + pad.getWidth() / 2 - ball.getWidth() / 2, pad.getY() + pad.getHeight() + 1);
@@ -226,7 +226,7 @@ public class BlockBreakerGame extends ApplicationAdapter {
 	private void manejarColisiones() {
 		if (block.collision(ball)) {
 			breakSound.play();
-			ball.handleBlockCollision(); // Manejar colisión con bloques
+			ball.handleBlockCollision();
 		}
 		if (!ball.isStill() && ball.collision(pad)) {
 			bounceSound.play();

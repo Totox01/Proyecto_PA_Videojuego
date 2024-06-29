@@ -17,10 +17,13 @@ public class SpecialBlock extends GameBlock {
         return powerUp;
     }
 
+    public Color getColor() {
+        return this.color;
+    }
+
     @Override
     public void draw(ShapeRenderer shape) {
-        // Draw the block in a special way to indicate that it's a special block
-        shape.setColor(Color.GOLD);
+        shape.setColor(this.getColor());
         shape.rect(this.getX(), this.getY(), this.getWidth(), this.getHeight());
     }
 
@@ -54,7 +57,6 @@ public class SpecialBlock extends GameBlock {
             PowerUp.Type[] negativeTypes = {PowerUp.Type.SHRINK_PADDLE, PowerUp.Type.SPEED_BALL};
             PowerUp.Type powerUpType;
 
-            // Randomly choose a positive or negative power-up
             if (Math.random() < 0.5) {
                 powerUpType = positiveTypes[new Random().nextInt(positiveTypes.length)];
             } else {

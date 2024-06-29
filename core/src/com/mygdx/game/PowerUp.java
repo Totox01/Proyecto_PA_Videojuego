@@ -6,10 +6,11 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 public class PowerUp extends GameObject {
     private float originalPaddleWidth;
     private float originalBallSpeed;
-    private static final float FALL_SPEED = 500; // Adjust as needed
-    private static final float DURATION = 7.0f; // Power-up effect lasts for 7 seconds
+    private static final float FALL_SPEED = 500;
+    private static final float DURATION = 7.0f;
     private float startTime;
 
+    @Override
     public void update(float deltaTime) {
         y -= FALL_SPEED * deltaTime;
     }
@@ -20,8 +21,8 @@ public class PowerUp extends GameObject {
 
     private final Type type;
 
-    public PowerUp(float x, float y, Type type) { // Modify the constructor to accept a PingBall object
-        super(x, y, 20, 20); // Assuming a power-up is 20x20 units
+    public PowerUp(float x, float y, Type type) {
+        super(x, y, 20, 20);
         this.type = type;
     }
 
@@ -30,12 +31,16 @@ public class PowerUp extends GameObject {
     public void draw(ShapeRenderer shape) {
         switch (type) {
             case ENLARGE_PADDLE:
+                shape.setColor(Color.GREEN);
+                break;
             case SLOW_BALL:
-                shape.setColor(Color.BLUE);
+                shape.setColor(Color.GRAY);
                 break;
             case SHRINK_PADDLE:
-            case SPEED_BALL:
                 shape.setColor(Color.RED);
+                break;
+            case SPEED_BALL:
+                shape.setColor(Color.BLUE);
                 break;
         }
         shape.rect(x, y, width, height);
