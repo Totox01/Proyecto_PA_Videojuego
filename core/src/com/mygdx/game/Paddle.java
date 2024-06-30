@@ -13,7 +13,7 @@ public class Paddle extends GameObject {
     private static final float SPEED = 1250;
     private final float initialWidth;
 
-    public Paddle(float x, float y) {
+    private Paddle(float x, float y) {
         super(x, y, 0.16f * Block.WORLD_WIDTH, 0.03f * Block.WORLD_HEIGHT);
         setUpdateStrategy(new PaddleUpdateStrategy());
         initialWidth = width;

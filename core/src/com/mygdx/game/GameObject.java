@@ -28,7 +28,7 @@ public abstract class GameObject {
         }
     }
 
-    public float getHeight() {
+    public float getHeight() {  
         return height;
     }
 

@@ -11,6 +11,8 @@ public class Block implements Colisionable {
     private static final float BLOCK_WIDTH = 0.09f * WORLD_WIDTH;
     private static final float BLOCK_HEIGHT = 0.05f * WORLD_HEIGHT;
 
+    private final BlockFactory normalBlockFactory = new NormalBlockFactory();
+    private final BlockFactory specialBlockFactory = new SpecialBlockFactory();
     private final ArrayList<GameBlock> blocks;
     private final ArrayList<PowerUp> powerUps;
     private final OrthographicCamera camera;
@@ -29,20 +31,11 @@ public class Block implements Colisionable {
             for (float x = 5; x < WORLD_WIDTH; x += BLOCK_WIDTH + 20) {
                 if (Math.random() < 0.1) {
                     Color customColor2 = new Color(94/255f, 68/255f, 235/255f, 1f);
-                    SpecialBlock block = new SpecialBlock.Builder(x, y)
-                            .width(BLOCK_WIDTH)
-                            .height(BLOCK_HEIGHT)
-                            .color(customColor2)
-                            .powerUp(x, y)
-                            .build();
+                    GameBlock block = specialBlockFactory.createBlock(x, y, BLOCK_WIDTH, BLOCK_HEIGHT, customColor2);
                     blocks.add(block);
-                }else {
+                } else {
                     Color customColor = new Color(183/255f, 226/255f, 251/255f, 1f);
-                    GameBlock block = new GameBlock.Builder(x, y)
-                            .width(BLOCK_WIDTH)
-                            .height(BLOCK_HEIGHT)
-                            .color(customColor)
-                            .build();
+                    GameBlock block = normalBlockFactory.createBlock(x, y, BLOCK_WIDTH, BLOCK_HEIGHT, customColor);
                     blocks.add(block);
                 }
             }
